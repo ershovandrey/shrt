@@ -19,10 +19,13 @@
         "drupal/admin_toolbar": "^3.0",
         "drupal/core-composer-scaffold": "^9.1",
         "drupal/core-project-message": "^9.1",
-        "drupal/core-recommended": "^9.1"
+        "drupal/core-recommended": "^9.1",
+        "drupal/remove_username": "^1.1"
     },
     "require-dev": {
         "drupal/console": "^1.9",
+        "drupal/devel": "^4.1",
+        "drupal/examples": "^3.0",
         "drush/drush": "^10.5"
     },
     "conflict": {
