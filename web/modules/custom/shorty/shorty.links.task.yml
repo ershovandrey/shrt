@@ -1,0 +1,22 @@
+entity.shorty.settings:
+  title: Settings
+  route_name: entity.shorty.settings
+  base_route: entity.shorty.settings
+entity.shorty.view:
+  title: View
+  route_name: entity.shorty.canonical
+  base_route: entity.shorty.canonical
+entity.shorty.edit_form:
+  title: Edit
+  route_name: entity.shorty.edit_form
+  base_route: entity.shorty.canonical
+entity.shorty.delete_form:
+  title: Delete
+  route_name: entity.shorty.delete_form
+  base_route: entity.shorty.canonical
+  weight: 10
+entity.shorty.collection:
+  title: Shorty
+  route_name: entity.shorty.collection
+  base_route: system.admin_content
+  weight: 10

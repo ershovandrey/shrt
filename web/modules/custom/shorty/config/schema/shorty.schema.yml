@@ -1,0 +1,8 @@
+shorty.settings:
+  type: mapping
+  label: Settings
+  mapping:
+    shorty_base:
+      type: string
+    shorty_index:
+      type: string

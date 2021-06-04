@@ -1,0 +1,15 @@
+entity.shorty.settings:
+  path: 'admin/structure/shorty'
+  defaults:
+    _form: '\Drupal\shorty\Form\ShortySettingsForm'
+    _title: 'Shorty'
+  requirements:
+    _permission: 'administer shorty'
+
+shorty.create:
+  path: '/shorty'
+  defaults:
+    _form: '\Drupal\shorty\Form\ShortyAddForm'
+    _title: 'Create URL'
+  requirements:
+    _permission: 'create shorty'

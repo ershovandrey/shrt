@@ -1,0 +1,10 @@
+<?php
+
+/**
+ * @file
+ * Provides a shorty entity type.
+ */
+
+function shorty_local_actions_alter(&$local_actions) {
+  $test = $local_actions;
+}

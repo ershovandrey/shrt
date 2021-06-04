@@ -1,0 +1,10 @@
+entity.shorty.settings:
+  title: Shorty settings
+  description: Configure a Shorty entity type
+  route_name:  entity.shorty.settings
+  parent: system.admin_structure
+entity.shorty.collection:
+  title: Shorties
+  description: List of shorties
+  route_name: entity.shorty.collection
+  parent: system.admin_content

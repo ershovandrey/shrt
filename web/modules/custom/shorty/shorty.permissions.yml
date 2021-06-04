@@ -1,0 +1,17 @@
+administer shorty:
+  title: 'Administer shorty settings'
+  restrict access: true
+create shorty:
+  title: 'Create shorty'
+delete any shorty:
+  title: 'Delete any shorty'
+view any shorty:
+  title: 'View any shorty'
+edit any shorty:
+  title: 'Edit any shorty'
+delete own shorty:
+  title: 'Delete own shorty'
+view own shorty:
+  title: 'View own shorty'
+edit own shorty:
+  title: 'Edit own shorty'

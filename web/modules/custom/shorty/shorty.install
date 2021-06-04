@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * @file
+ * Shorty install file
+ */
+
+/**
+ * Implements hook_install().
+ * Set the default value of Shorty base URL.
+ */
+function shorty_install() {
+  global $base_url;
+  \Drupal::configFactory()->getEditable('shorty.settings')
+    ->set('shorty_base', $base_url)
+    ->save();
+}
+
+/**
+ * Implement hook_uninstall().
+ */
+function shorty_uninstall() {
+  // Remove variables.
+  \Drupal::configFactory()
+    ->getEditable('shorty.settings')
+    ->clear('shorty_base')
+    ->save();
+  \Drupal::configFactory()
+    ->getEditable('shorty.settings')
+    ->clear('shorty_index')
+    ->save();
+}

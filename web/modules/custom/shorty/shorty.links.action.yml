@@ -1,0 +1,6 @@
+shorty.create:
+  route_name: shorty.create
+  title: 'Add shorty'
+  class: '\Drupal\shorty\Plugin\Menu\LocalAction\AddShortyLocalAction'
+  appears_on:
+    - entity.shorty.collection
