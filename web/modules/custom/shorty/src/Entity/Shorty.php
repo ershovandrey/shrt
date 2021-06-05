@@ -120,7 +120,7 @@ class Shorty extends ContentEntityBase implements ShortyInterface {
   /**
    * {@inheritdoc}
    */
-  public function setBlocked(): ShortyInterface {
+  public function setDisabled(): ShortyInterface {
     return $this->setStatus(self::SHORTY_STATUS_BLOCKED);
   }
 

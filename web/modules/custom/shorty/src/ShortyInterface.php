@@ -37,7 +37,7 @@ interface ShortyInterface extends ContentEntityInterface, EntityOwnerInterface, 
    * @return \Drupal\shorty\ShortyInterface
    *   The called shorty entity.
    */
-  public function setBlocked(): ShortyInterface;
+  public function setDisabled(): ShortyInterface;
 
   /**
    * Gets the shorty creation timestamp.

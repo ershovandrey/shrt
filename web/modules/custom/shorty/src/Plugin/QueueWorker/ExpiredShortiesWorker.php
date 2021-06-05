@@ -28,7 +28,7 @@ class ExpiredShortiesWorker extends QueueWorkerBase {
         $shorty->isExpired() &&
         $shorty->isActive()
       ) {
-        $shorty->setBlocked()->save();
+        $shorty->setDisabled()->save();
       }
     }
   }

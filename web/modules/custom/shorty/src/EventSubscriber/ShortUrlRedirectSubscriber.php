@@ -65,20 +65,24 @@ class ShortUrlRedirectSubscriber implements EventSubscriberInterface {
    *
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   Request event.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function onKernelRequest(RequestEvent $event): void {
     $path = $this->currentPath->getPath();
     $short_url = str_replace("/", "", $path);
 
     if ($this->helper->validateShortUrl($short_url)){
-      try {
-        $shorty = $this->helper->getShortyByShortUrl($short_url, TRUE);
-      }
-      catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
-        return;
-      }
+      $shorty = $this->helper->getShortyByShortUrl($short_url, TRUE);
       if ($shorty instanceof ShortyInterface) {
-        $this->shortyRedirect($shorty);
+        if (!$shorty->isExpired()) {
+          // Found not expired shorty - redirect to the long URL.
+          $this->shortyRedirect($shorty);
+          return;
+        }
+
+        // Found active shorty, but it's already expired and should block it.
+        $shorty->setDisabled()->save();
       }
     }
   }
