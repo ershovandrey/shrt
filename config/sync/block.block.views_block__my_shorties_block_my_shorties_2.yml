@@ -1,0 +1,38 @@
+uuid: c9b33db5-3eeb-40e2-aea7-7a4cbab9594a
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.my_shorties
+  module:
+    - system
+    - user
+    - views
+  theme:
+    - claro
+id: views_block__my_shorties_block_my_shorties_2
+theme: claro
+region: content
+weight: 0
+provider: null
+plugin: 'views_block:my_shorties-block_my_shorties'
+settings:
+  id: 'views_block:my_shorties-block_my_shorties'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+  context_mapping: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: "/user/*\r\n!/user/*/*"
+    negate: false
+  user_role:
+    id: user_role
+    roles:
+      authenticated: authenticated
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'

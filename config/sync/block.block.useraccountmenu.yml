@@ -1,4 +1,4 @@
-uuid: afd73311-a0be-4152-b8a2-1566bad956f8
+uuid: 9385f858-af18-42fb-b085-8cb0344bfc09
 langcode: en
 status: true
 dependencies:
@@ -7,13 +7,11 @@ dependencies:
   module:
     - system
   theme:
-    - olivero
-_core:
-  default_config_hash: 19CmBQT7OL-3VRx-isvQ5jfGekABppTKv1h5rHK376s
-id: olivero_account_menu
-theme: olivero
-region: secondary_menu
-weight: -4
+    - claro
+id: useraccountmenu
+theme: claro
+region: header
+weight: -1
 provider: null
 plugin: 'system_menu_block:account'
 settings:
@@ -22,6 +20,10 @@ settings:
   provider: system
   label_display: '0'
   level: 1
-  depth: 1
+  depth: 0
   expand_all_items: false
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: '/user/*'
+    negate: true

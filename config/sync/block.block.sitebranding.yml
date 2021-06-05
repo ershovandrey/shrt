@@ -1,17 +1,15 @@
-uuid: e4aa6d6d-b69b-4f99-a0c0-51eeea51820b
+uuid: af6e4b92-5725-449e-a08c-0628e9d27d3e
 langcode: en
 status: true
 dependencies:
   module:
     - system
   theme:
-    - olivero
-_core:
-  default_config_hash: sYjScJ6uW1UvGZ-G3AtTcZmPoOiQJtndHqamm8FAFgU
-id: olivero_site_branding
-theme: olivero
+    - claro
+id: sitebranding
+theme: claro
 region: header
-weight: 0
+weight: -4
 provider: null
 plugin: system_branding_block
 settings:
