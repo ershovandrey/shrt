@@ -2,9 +2,19 @@
 
 /**
  * @file
- * Provides a shorty entity type.
+ * Shorty main module file.
  */
 
-function shorty_local_actions_alter(&$local_actions) {
-  $test = $local_actions;
+/**
+ * Implements hook_cron().
+ */
+function shorty_cron() {
+  // Block all expired shorties using queue worker.
+  $queue = \Drupal::queue('expired_shorties');
+  $ids = \Drupal::entityTypeManager()
+    ->getStorage('shorty')
+    ->getExpiredShortyIds();
+  foreach ($ids as $id) {
+    $queue->createItem($id);
+  }
 }

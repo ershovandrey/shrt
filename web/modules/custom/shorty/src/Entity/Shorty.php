@@ -20,6 +20,7 @@ use Drupal\user\UserInterface;
  *   label = @Translation("Shorty"),
  *   label_collection = @Translation("Shorties"),
  *   handlers = {
+ *     "storage" = "Drupal\shorty\ShortyStorage",
  *     "storage_schema" = "Drupal\shorty\ShortyStorageSchema",
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\shorty\ShortyListBuilder",
@@ -62,6 +63,20 @@ class Shorty extends ContentEntityBase implements ShortyInterface {
    */
   public const SHORTY_STATUS_BLOCKED = 0;
 
+  /**
+   * Number of seconds in one day (1 day).
+   */
+  public const SHORTY_DAY_PERIOD = 60 * 60 * 24;
+
+  /**
+   * Number of seconds in one month (30 days).
+   */
+  public const SHORTY_MONTH_PERIOD = 60 * 60 * 24 * 30;
+
+  /**
+   * Number of seconds in one year (365 days).
+   */
+  public const SHORTY_YEAR_PERIOD = 60 * 60 * 24 * 365;
 
   /**
    * {@inheritdoc}
@@ -84,7 +99,7 @@ class Shorty extends ContentEntityBase implements ShortyInterface {
    * {@inheritdoc}
    */
   public function label() {
-    return $this->getSourceUrl();
+    return $this->getSourceUrl()->toString();
   }
 
   /**
@@ -97,9 +112,16 @@ class Shorty extends ContentEntityBase implements ShortyInterface {
   /**
    * {@inheritdoc}
    */
-  public function setStatus(bool $status): ShortyInterface {
+  public function setStatus(int $status): ShortyInterface {
     $this->set('status', $status);
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBlocked(): ShortyInterface {
+    return $this->setStatus(self::SHORTY_STATUS_BLOCKED);
   }
 
   /**
@@ -127,6 +149,14 @@ class Shorty extends ContentEntityBase implements ShortyInterface {
   /**
    * {@inheritdoc}
    */
+  public function setOwner(UserInterface $account): ShortyInterface {
+    $this->set('uid', $account->id());
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getOwnerId(): ?int {
     return $this->get('uid')->target_id;
   }
@@ -142,16 +172,16 @@ class Shorty extends ContentEntityBase implements ShortyInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account): ShortyInterface {
-    $this->set('uid', $account->id());
-    return $this;
+  public function getExpireOnTime(): ?int {
+    return $this->get('expire_on')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getExpireOnTime(): ?int {
-    return $this->get('expire_on')->value;
+  public function isExpired(): bool {
+    $current_time = \Drupal::service('datetime.time')->getCurrentTime();
+    return $this->getExpireOnTime() <= $current_time;
   }
 
   /**
@@ -169,13 +199,6 @@ class Shorty extends ContentEntityBase implements ShortyInterface {
     $this->set('visits', $visits);
     $this->save();
     return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getHashValue(): string {
-    return $this->get('hash')->value;
   }
 
   /**
@@ -218,17 +241,6 @@ class Shorty extends ContentEntityBase implements ShortyInterface {
         'weight' => 0,
       ])
       ->setDisplayConfigurable('view', TRUE);
-
-    $fields['hash'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Hash of redirect URL'))
-      ->setDescription(t('The hash of the redirect URL.'))
-      ->setReadOnly(TRUE)
-      ->setSettings([
-        'max_length' => 32,
-        'text_processing' => 0,
-      ])
-      // Set no default value.
-      ->setDefaultValue(NULL);
 
     $fields['source'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Source Path'))
@@ -318,146 +330,6 @@ class Shorty extends ContentEntityBase implements ShortyInterface {
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the shorty was last edited.'));
-
-//    $fields['destination'] = BaseFieldDefinition::create('uri')
-//      ->setLabel(t('Redirect URL'))
-//      ->setDescription(t('Redirect destination URL.'))
-//      ->setRequired(TRUE)
-//      ->setDisplayOptions('form', [
-//        'type' => 'uri',
-//        'settings' => [
-//          'display_label' => FALSE,
-//        ],
-//        'weight' => 0,
-//      ])
-//      ->setDisplayConfigurable('form', FALSE)
-//      ->setDisplayOptions('view', [
-//        'type' => 'url',
-//        'label' => 'above',
-//        'weight' => 0,
-//      ])
-//      ->setDisplayConfigurable('view', TRUE);
-//
-//    $fields['hash'] = BaseFieldDefinition::create('string')
-//      ->setLabel(t('Hash of redirect URL'))
-//      ->setDescription(t('The hash of the redirect URL.'))
-//      ->setReadOnly(TRUE)
-//      ->setSettings([
-//        'max_length' => 32,
-//        'text_processing' => 0,
-//      ])
-//      // Set no default value.
-//      ->setDefaultValue(NULL);
-//
-//    $fields['source'] = BaseFieldDefinition::create('uri')
-//      ->setLabel(t('Source Path'))
-//      ->setDescription(t('Redirect source path.'))
-//      //->setRequired(TRUE)
-//      ->setSetting('max_length', 255)
-//      ->setDisplayOptions('form', [
-//        'type' => 'uri',
-//        'settings' => [
-//          'display_label' => FALSE,
-//        ],
-//        'weight' => 0,
-//      ])
-//      ->setDisplayConfigurable('form', TRUE)
-//      ->setDisplayOptions('view', [
-//        'type' => 'url',
-//        'label' => 'above',
-//        'weight' => 0,
-//      ])
-//      ->setDisplayConfigurable('view', TRUE)
-//      ->setConstraints(['SourceUrl']);
-//
-//    $fields['expire_on'] = BaseFieldDefinition::create('timestamp')
-//      ->setLabel(t('Expire on'))
-//      ->setDescription(t('The time that the shorty will be expired.'))
-//      ->setDisplayOptions('view', [
-//        'label' => 'above',
-//        'type' => 'timestamp',
-//        'weight' => 0,
-//      ])
-//      ->setDisplayConfigurable('form', TRUE)
-//      ->setDisplayOptions('form', [
-//        'type' => 'datetime_timestamp',
-//        'weight' => 0,
-//      ])
-//      ->setDisplayConfigurable('view', TRUE);
-//
-//    $fields['status'] = BaseFieldDefinition::create('boolean')
-//      ->setLabel(t('Status'))
-//      ->setDescription(t('A boolean indicating whether the shorty is enabled.'))
-//      ->setDefaultValue(TRUE)
-//      ->setSetting('on_label', 'Active')
-//      ->setDisplayOptions('form', [
-//        'type' => 'boolean_checkbox',
-//        'settings' => [
-//          'display_label' => FALSE,
-//        ],
-//        'weight' => 0,
-//      ])
-//      ->setDisplayConfigurable('form', TRUE)
-//      ->setDisplayOptions('view', [
-//        'type' => 'boolean',
-//        'label' => 'above',
-//        'weight' => 0,
-//        'settings' => [
-//          'format' => 'enabled-disabled',
-//        ],
-//      ])
-//      ->setDisplayConfigurable('view', TRUE);
-//
-//    $fields['visits'] = BaseFieldDefinition::create('integer')
-//      ->setLabel(t('Visits'))
-//      ->setDescription(t('Visits count number.'))
-//      ->setReadOnly(TRUE)
-//      ->setDisplayOptions('view', [
-//        'type' => 'int',
-//        'label' => 'above',
-//        'weight' => 0,
-//      ])
-//      ->setDisplayConfigurable('view', TRUE);
-//
-//    $fields['uid'] = BaseFieldDefinition::create('entity_reference')
-//      ->setLabel(t('Author'))
-//      ->setDescription(t('The user ID of the shorty author.'))
-//      ->setSetting('target_type', 'user')
-//      ->setDisplayOptions('form', [
-//        'type' => 'entity_reference_autocomplete',
-//        'settings' => [
-//          'match_operator' => 'CONTAINS',
-//          'size' => 60,
-//          'placeholder' => '',
-//        ],
-//        'weight' => 0,
-//      ])
-//      ->setDisplayConfigurable('form', TRUE)
-//      ->setDisplayOptions('view', [
-//        'label' => 'above',
-//        'type' => 'author',
-//        'weight' => 0,
-//      ])
-//      ->setDisplayConfigurable('view', TRUE);
-//
-//    $fields['created'] = BaseFieldDefinition::create('created')
-//      ->setLabel(t('Authored on'))
-//      ->setDescription(t('The time that the shorty was created.'))
-//      ->setDisplayOptions('view', [
-//        'label' => 'above',
-//        'type' => 'timestamp',
-//        'weight' => 0,
-//      ])
-//      ->setDisplayConfigurable('form', TRUE)
-//      ->setDisplayOptions('form', [
-//        'type' => 'datetime_timestamp',
-//        'weight' => 0,
-//      ])
-//      ->setDisplayConfigurable('view', TRUE);
-//
-//    $fields['changed'] = BaseFieldDefinition::create('changed')
-//      ->setLabel(t('Changed'))
-//      ->setDescription(t('The time that the shorty was last edited.'));
 
     return $fields;
   }

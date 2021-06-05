@@ -15,3 +15,5 @@ view own shorty:
   title: 'View own shorty'
 edit own shorty:
   title: 'Edit own shorty'
+set shorty long expiration:
+  title: 'Set shorty long expiration'

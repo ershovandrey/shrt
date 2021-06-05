@@ -13,6 +13,33 @@ use Drupal\Core\Entity\EntityChangedInterface;
 interface ShortyInterface extends ContentEntityInterface, EntityOwnerInterface, EntityChangedInterface {
 
   /**
+   * Returns the shorty status.
+   *
+   * @return bool
+   *   TRUE if the shorty is enabled, FALSE otherwise.
+   */
+  public function isActive(): bool;
+
+  /**
+   * Sets the shorty status.
+   *
+   * @param int $status
+   *   1 to enable this shorty, 0 to disable.
+   *
+   * @return \Drupal\shorty\ShortyInterface
+   *   The called shorty entity.
+   */
+  public function setStatus(int $status): ShortyInterface;
+
+  /**
+   * Block the shorty.
+   *
+   * @return \Drupal\shorty\ShortyInterface
+   *   The called shorty entity.
+   */
+  public function setBlocked(): ShortyInterface;
+
+  /**
    * Gets the shorty creation timestamp.
    *
    * @return int
@@ -32,31 +59,20 @@ interface ShortyInterface extends ContentEntityInterface, EntityOwnerInterface, 
   public function setCreatedTime(int $timestamp): ShortyInterface;
 
   /**
-   * Returns the shorty status.
-   *
-   * @return bool
-   *   TRUE if the shorty is enabled, FALSE otherwise.
-   */
-  public function isActive(): bool;
-
-  /**
-   * Sets the shorty status.
-   *
-   * @param bool $status
-   *   TRUE to enable this shorty, FALSE to disable.
-   *
-   * @return \Drupal\shorty\ShortyInterface
-   *   The called shorty entity.
-   */
-  public function setStatus(bool $status): ShortyInterface;
-
-  /**
    * Gets the shorty expire_on timestamp.
    *
    * @return int|null
    *   Expire On timestamp of the shorty.
    */
   public function getExpireOnTime(): ?int;
+
+  /**
+   * Check if the shorty is expired.
+   *
+   * @return bool
+   *   TRUE if shorty is expired, FALSE otherwise.
+   */
+  public function isExpired(): bool;
 
   /**
    * Get the shorty visits number.
@@ -73,14 +89,6 @@ interface ShortyInterface extends ContentEntityInterface, EntityOwnerInterface, 
    *   The called shorty entity.
    */
   public function incrementVisits(): ShortyInterface;
-
-  /**
-   * Get the Hash value.
-   *
-   * @return string
-   *   The shorty Hash value.
-   */
-  public function getHashValue(): string;
 
   /**
    * Get shorty source URL.

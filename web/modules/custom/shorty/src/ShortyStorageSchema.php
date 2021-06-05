@@ -22,9 +22,12 @@ class ShortyStorageSchema extends SqlContentEntityStorageSchema {
         case 'source':
           $this->addSharedTableFieldIndex($storage_definition, $schema, TRUE, 255);
           break;
-        case 'hash':
-          $this->addSharedTableFieldIndex($storage_definition, $schema, TRUE, 32);
+
+        case 'expire_on':
+        case 'status':
+          $this->addSharedTableFieldIndex($storage_definition, $schema, TRUE);
           break;
+
       }
     }
 
