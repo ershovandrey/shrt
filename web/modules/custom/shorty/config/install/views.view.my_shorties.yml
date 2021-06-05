@@ -1,13 +1,11 @@
 dependencies:
-  config:
-    - user.role.authenticated
   module:
     - shorty
     - user
 id: my_shorties
 label: 'My Shorties'
 module: views
-description: 'User''s shorties'
+description: 'User shorties'
 tag: ''
 base_table: shorty
 base_field: id
@@ -19,10 +17,9 @@ display:
     position: 0
     display_options:
       access:
-        type: role
+        type: perm
         options:
-          role:
-            authenticated: authenticated
+          perm: 'view own shorty'
       cache:
         type: tag
         options: {  }
@@ -617,10 +614,10 @@ display:
           entity_type: shorty
           entity_field: changed
           plugin_id: field
-        operations:
-          id: operations
+        delete_shorty:
+          id: delete_shorty
           table: shorty
-          field: operations
+          field: delete_shorty
           relationship: none
           group_type: group
           admin_label: ''
@@ -665,9 +662,11 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          destination: true
+          text: delete
+          output_url_as_text: false
+          absolute: true
           entity_type: shorty
-          plugin_id: entity_operations
+          plugin_id: entity_link_delete
       filters:
         source:
           id: source
@@ -834,16 +833,6 @@ display:
           tokenize: false
           content: '<a href="[site:url]/shorty" class="button button--action button--primary">Create a short URL</a>'
           plugin_id: text_custom
-        result:
-          id: result
-          table: views
-          field: result
-          relationship: none
-          group_type: group
-          admin_label: ''
-          empty: false
-          content: 'Displaying @start - @end of @total shorties'
-          plugin_id: result
       footer: {  }
       empty:
         area:
@@ -859,18 +848,29 @@ display:
             value: 'There is no shorty with selected criteria.'
             format: plain_text
           plugin_id: text
-      relationships: {  }
-      arguments:
+      relationships:
         uid:
           id: uid
           table: shorty
           field: uid
           relationship: none
           group_type: group
+          admin_label: User
+          required: true
+          entity_type: shorty
+          entity_field: uid
+          plugin_id: standard
+      arguments:
+        uid:
+          id: uid
+          table: users_field_data
+          field: uid
+          relationship: uid
+          group_type: group
           admin_label: ''
           default_action: default
           exception:
-            value: all
+            value: ''
             title_enable: false
             title: All
           title_enable: false
@@ -888,20 +888,16 @@ display:
             sort_order: asc
             number_of_records: 0
             format: default_summary
-          specify_validation: true
+          specify_validation: false
           validate:
-            type: 'entity:shorty'
-            fail: empty
-          validate_options:
-            access: true
-            operation: view
-            multiple: 0
-            bundles: {  }
+            type: none
+            fail: 'not found'
+          validate_options: {  }
           break_phrase: false
           not: false
-          entity_type: shorty
+          entity_type: user
           entity_field: uid
-          plugin_id: numeric
+          plugin_id: user_uid
       display_extenders: {  }
       use_ajax: true
       filter_groups:
@@ -915,16 +911,17 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.roles
+        - user.permissions
       tags: {  }
   block_my_shorties:
     display_plugin: block
     id: block_my_shorties
-    display_title: Block
+    display_title: 'My Shorties block'
     position: 1
     display_options:
       display_extenders: {  }
       block_description: 'My Shorties'
+      display_description: ''
     cache_metadata:
       max-age: -1
       contexts:
@@ -932,5 +929,5 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.roles
+        - user.permissions
       tags: {  }
