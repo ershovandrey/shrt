@@ -1,13 +1,13 @@
 dependencies:
   config:
-    - user.role.authenticated
+    - system.menu.admin
   module:
     - shorty
     - user
-id: my_shorties
-label: 'My Shorties'
+id: administer_shories
+label: 'Administer Shorties'
 module: views
-description: 'User''s shorties'
+description: 'Administer shorties'
 tag: ''
 base_table: shorty
 base_field: id
@@ -19,10 +19,9 @@ display:
     position: 0
     display_options:
       access:
-        type: role
+        type: perm
         options:
-          role:
-            authenticated: authenticated
+          perm: 'administer shorty'
       cache:
         type: tag
         options: {  }
@@ -45,17 +44,12 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
       pager:
-        type: full
+        type: mini
         options:
-          items_per_page: 10
+          items_per_page: 50
           offset: 0
           id: 0
           total_pages: null
-          tags:
-            previous: '‹ Previous'
-            next: 'Next ›'
-            first: '« First'
-            last: 'Last »'
           expose:
             items_per_page: false
             items_per_page_label: 'Items per page'
@@ -64,7 +58,9 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
-          quantity: 9
+          tags:
+            previous: ‹‹
+            next: ››
       style:
         type: table
         options:
@@ -77,16 +73,24 @@ display:
           summary: ''
           description: ''
           columns:
+            id: id
             source: source
             destination: destination
-            visits: visits
+            uid: uid
             expire_on: expire_on
+            visits: visits
             status: status
             created: created
             changed: changed
-            delete_shorty: delete_shorty
             operations: operations
           info:
+            id:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
             source:
               sortable: true
               default_sort_order: asc
@@ -101,7 +105,7 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
-            visits:
+            uid:
               sortable: true
               default_sort_order: asc
               align: ''
@@ -109,6 +113,13 @@ display:
               empty_column: false
               responsive: ''
             expire_on:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            visits:
               sortable: true
               default_sort_order: asc
               align: ''
@@ -136,13 +147,6 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
-            delete_shorty:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
             operations:
               align: ''
               separator: ''
@@ -153,6 +157,72 @@ display:
       row:
         type: fields
       fields:
+        id:
+          id: id
+          table: shorty
+          field: id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ID
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_integer
+          settings:
+            thousand_separator: ''
+            prefix_suffix: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: shorty
+          entity_field: id
+          plugin_id: field
         source:
           id: source
           table: shorty
@@ -165,8 +235,8 @@ display:
           alter:
             alter_text: false
             text: ''
-            make_link: true
-            path: '/{{ source__value }}'
+            make_link: false
+            path: ''
             absolute: false
             external: false
             replace_spaces: false
@@ -233,7 +303,7 @@ display:
             make_link: true
             path: '{{ destination__value }}'
             absolute: false
-            external: false
+            external: true
             replace_spaces: false
             path_case: none
             trim_whitespace: false
@@ -245,7 +315,7 @@ display:
             target: _blank
             nl2br: false
             max_length: 50
-            word_boundary: false
+            word_boundary: true
             ellipsis: true
             more_link: false
             more_link_text: ''
@@ -283,14 +353,14 @@ display:
           entity_type: shorty
           entity_field: destination
           plugin_id: field
-        visits:
-          id: visits
+        uid:
+          id: uid
           table: shorty
-          field: visits
+          field: uid
           relationship: none
           group_type: group
           admin_label: ''
-          label: Visits
+          label: Owner
           exclude: false
           alter:
             alter_text: false
@@ -331,12 +401,11 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          click_sort_column: value
-          type: number_integer
+          click_sort_column: target_id
+          type: entity_reference_label
           settings:
-            thousand_separator: ''
-            prefix_suffix: true
-          group_column: value
+            link: true
+          group_column: target_id
           group_columns: {  }
           group_rows: true
           delta_limit: 0
@@ -347,7 +416,7 @@ display:
           separator: ', '
           field_api_classes: false
           entity_type: shorty
-          entity_field: visits
+          entity_field: uid
           plugin_id: field
         expire_on:
           id: expire_on
@@ -415,6 +484,72 @@ display:
           field_api_classes: false
           entity_type: shorty
           entity_field: expire_on
+          plugin_id: field
+        visits:
+          id: visits
+          table: shorty
+          field: visits
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: Visits
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_integer
+          settings:
+            thousand_separator: ''
+            prefix_suffix: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: shorty
+          entity_field: visits
           plugin_id: field
         status:
           id: status
@@ -666,7 +801,8 @@ display:
           empty_zero: false
           hide_alter_empty: true
           destination: true
-          entity_type: shorty
+          entity_type: null
+          entity_field: null
           plugin_id: entity_operations
       filters:
         source:
@@ -755,6 +891,109 @@ display:
           entity_type: shorty
           entity_field: destination
           plugin_id: string
+        uid_1:
+          id: uid_1
+          table: users_field_data
+          field: uid
+          relationship: uid
+          group_type: group
+          admin_label: ''
+          operator: in
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: uid_1_op
+            label: 'Owner (autocomplete)'
+            description: ''
+            use_operator: false
+            operator: uid_1_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: uid_1
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: user
+          entity_field: uid
+          plugin_id: user_name
+        uid_2:
+          id: uid_2
+          table: shorty
+          field: uid
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: uid_2_op
+            label: Author
+            description: null
+            use_operator: false
+            operator: uid_2_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: uid_2
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: null
+            min_placeholder: null
+            max_placeholder: null
+          is_grouped: true
+          group_info:
+            label: Owner
+            description: ''
+            identifier: uid_2
+            optional: false
+            widget: radios
+            multiple: false
+            remember: false
+            default_group: '1'
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: Registered
+                operator: '>'
+                value:
+                  value: '0'
+                  min: ''
+                  max: ''
+              2:
+                title: Anonymous
+                operator: '='
+                value:
+                  value: '0'
+                  min: ''
+                  max: ''
+          entity_type: shorty
+          entity_field: uid
+          plugin_id: numeric
         status:
           id: status
           table: shorty
@@ -763,7 +1002,7 @@ display:
           group_type: group
           admin_label: ''
           operator: '='
-          value: All
+          value: ''
           group: 1
           exposed: true
           expose:
@@ -775,7 +1014,7 @@ display:
             operator_limit_selection: false
             operator_list: {  }
             identifier: status
-            required: false
+            required: true
             remember: false
             multiple: false
             remember_roles:
@@ -816,24 +1055,13 @@ display:
           order: DESC
           exposed: false
           expose:
-            label: Created
+            label: ''
           granularity: second
           entity_type: shorty
           entity_field: created
           plugin_id: date
-      title: 'My Shorties'
+      title: 'Administer shorties'
       header:
-        area_text_custom:
-          id: area_text_custom
-          table: views
-          field: area_text_custom
-          relationship: none
-          group_type: group
-          admin_label: ''
-          empty: true
-          tokenize: false
-          content: '<a href="[site:url]/shorty" class="button button--action button--primary">Create a short URL</a>'
-          plugin_id: text_custom
         result:
           id: result
           table: views
@@ -856,58 +1084,28 @@ display:
           empty: true
           tokenize: false
           content:
-            value: 'There is no shorty with selected criteria.'
+            value: 'No shorties available for the selected criteria.'
             format: plain_text
           plugin_id: text
-      relationships: {  }
-      arguments:
+      relationships:
         uid:
           id: uid
           table: shorty
           field: uid
           relationship: none
           group_type: group
-          admin_label: ''
-          default_action: default
-          exception:
-            value: all
-            title_enable: false
-            title: All
-          title_enable: false
-          title: ''
-          default_argument_type: user
-          default_argument_options:
-            user: false
-          default_argument_skip_url: false
-          summary_options:
-            base_path: ''
-            count: true
-            items_per_page: 25
-            override: false
-          summary:
-            sort_order: asc
-            number_of_records: 0
-            format: default_summary
-          specify_validation: true
-          validate:
-            type: 'entity:shorty'
-            fail: empty
-          validate_options:
-            access: true
-            operation: view
-            multiple: 0
-            bundles: {  }
-          break_phrase: false
-          not: false
+          admin_label: Owner
+          required: false
           entity_type: shorty
           entity_field: uid
-          plugin_id: numeric
+          plugin_id: standard
+      arguments: {  }
       display_extenders: {  }
-      use_ajax: true
       filter_groups:
         operator: AND
         groups:
           1: AND
+      use_ajax: true
     cache_metadata:
       max-age: -1
       contexts:
@@ -915,16 +1113,31 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.roles
+        - user.permissions
       tags: {  }
-  block_my_shorties:
-    display_plugin: block
-    id: block_my_shorties
-    display_title: Block
+  administer_shorties:
+    display_plugin: page
+    id: administer_shorties
+    display_title: 'Admin page'
     position: 1
     display_options:
       display_extenders: {  }
-      block_description: 'My Shorties'
+      path: admin/content/shorty
+      menu:
+        type: normal
+        title: 'Administer shorties'
+        description: ''
+        expanded: true
+        parent: ''
+        weight: 0
+        context: '0'
+        menu_name: admin
+      tab_options:
+        type: none
+        title: 'Administer shorites'
+        description: ''
+        weight: 0
+      display_description: ''
     cache_metadata:
       max-age: -1
       contexts:
@@ -932,5 +1145,5 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.roles
+        - user.permissions
       tags: {  }

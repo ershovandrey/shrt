@@ -1,5 +1,5 @@
 administer shorty:
-  title: 'Administer shorty settings'
+  title: 'Administer shorty'
   restrict access: true
 create shorty:
   title: 'Create shorty'
