@@ -4,3 +4,4 @@ shorty.create:
   class: '\Drupal\shorty\Plugin\Menu\LocalAction\AddShortyLocalAction'
   appears_on:
     - entity.shorty.collection
+    - entity.user.canonical

@@ -4,7 +4,7 @@ dependencies:
   module:
     - shorty
     - user
-id: administer_shories
+id: administer_shorties
 label: 'Administer Shorties'
 module: views
 description: 'Administer shorties'
@@ -272,9 +272,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: string
+          type: shorty_short_url
           settings:
-            link_to_entity: false
+            as_link: 1
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -970,11 +970,11 @@ display:
             label: Owner
             description: ''
             identifier: uid_2
-            optional: false
+            optional: true
             widget: radios
             multiple: false
             remember: false
-            default_group: '1'
+            default_group: All
             default_group_multiple: {  }
             group_items:
               1:

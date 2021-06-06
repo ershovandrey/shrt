@@ -165,8 +165,8 @@ display:
           alter:
             alter_text: false
             text: ''
-            make_link: true
-            path: '/{{ source__value }}'
+            make_link: false
+            path: ''
             absolute: false
             external: false
             replace_spaces: false
@@ -202,9 +202,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: string
+          type: shorty_short_url
           settings:
-            link_to_entity: false
+            as_link: 1
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -824,18 +824,7 @@ display:
           entity_field: created
           plugin_id: date
       title: 'My Shorties'
-      header:
-        area_text_custom:
-          id: area_text_custom
-          table: views
-          field: area_text_custom
-          relationship: none
-          group_type: group
-          admin_label: ''
-          empty: true
-          tokenize: false
-          content: '<a href="[site:url]/shorty" class="button button--action button--primary">Create a short URL</a>'
-          plugin_id: text_custom
+      header: {  }
       footer: {  }
       empty:
         area:
