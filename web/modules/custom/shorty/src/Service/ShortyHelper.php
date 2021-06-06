@@ -13,10 +13,9 @@ use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\path_alias\AliasManagerInterface;
 use Drupal\shorty\Entity\Shorty;
-use Drupal\shorty\ShortyInterface;
 
 /**
- * ShortyHelper service.
+ * Shorty Helper service.
  */
 class ShortyHelper {
 
@@ -88,23 +87,24 @@ class ShortyHelper {
   }
 
   /**
-   * Validate a long URL
+   * Validate a long URL.
    *
-   * @param
-   * $long url - the long URL entered by user
+   * @param string $long_url
+   *   $long url - the long URL entered by user.
    *
    * @return bool
-   *  TRUE if valid, FALSE if invalid
+   *   TRUE if valid, FALSE if invalid
    */
   public function validateLongUrl(&$long_url): bool {
     $return = TRUE;
 
-    // if the person didn't remove the original http:// from the field, pull it out
+    // If the person didn't remove the original http:// from the field,
+    // Pull it out.
     $long_url = preg_replace('!^http\://(http\://|https\://)!i', '\\1', $long_url);
     $long_parse = parse_url($long_url);
 
     if ($long_parse === FALSE || !isset($long_parse['host'])) {
-      // malformed URL or no host in the URL
+      // Malformed URL or no host in the URL.
       $return = FALSE;
     }
     elseif ($long_parse['scheme'] !== 'http' && $long_parse['scheme'] !== 'https') {
@@ -118,38 +118,40 @@ class ShortyHelper {
    * Validate short URL.
    *
    * @param string $url
-   *  Short URL to validate.
+   *   Short URL to validate.
    *
    * @return bool
    *   TRUE if short URL is valid, FALSE otherwise.
    */
   public function validateShortUrl(string $url): bool {
-    // check the length of the url
+    // Check the length of the url.
     if ($url === '') {
       return FALSE;
     }
-    // disallow: #%&@*{}\:;<>?/+.,'"$|`^[] and space character
+    // disallow: #%&@*{}\:;<>?/+.,'"$|`^[] and space character.
     return !preg_match('/[\/#%&\@\*{}\\:\;<>\?\+ \.\,\'\"\$\|`^\[\]]/u', $url);
   }
 
   /**
-   * Return next available short URL
+   * Return next available short URL.
    *
    * @return string
    *   Short path.
    */
   public function getNextShortUrl(): string {
-    $count = $this->state->get('shorty_counter', 3); // starts the URLs with 3 characters
+    // Starts the URLs with 3 characters.
+    $count = $this->state->get('shorty_counter', 3);
     do {
       $count++;
-      // counter is stored as base 10
-      // $index is a-z, A-Z, 0-9, sorted randomly, with confusing characters (01lIO) removed - 57 characters
-      // a custom index can be created as a variable override in settings.php
+      // Counter is stored as base 10 $index is a-z, A-Z, 0-9,
+      // Sorted randomly, with confusing characters (01lIO) removed -
+      // 57 characters a custom index can be created as
+      // a variable override in settings.php.
       $index = $this->config->get('shorty_index');
       $str = $this->dec2any($count, 0, $index);
 
-      // check that this string hasn't been used already
-      // check that the string is a valid (available) path
+      // Check that this string hasn't been used already.
+      // Check that the string is a valid (available) path.
     } while ($this->shortUrlExists($str) !== FALSE || $this->isShortUrlAvailable($str) === FALSE);
 
     $this->state->set('shorty_counter', $count);
@@ -157,19 +159,16 @@ class ShortyHelper {
     return $str;
   }
 
-
   /**
-   * Check to see if this short URL already exists
+   * Check to see if this short URL already exists.
    *
    * @param string $short
    *   Short URL.
-   * @param null $long
-   *   Long URL.
    *
    * @return false|string
-   *  FALSE if not found, 'found' if found and 'match' if short === long.
+   *   FALSE if not found, 'found' if found and 'match' if short === long.
    */
-  private function shortUrlExists(string $short, $long = NULL) {
+  private function shortUrlExists(string $short) {
     try {
       $shorty = $this->getShortyByShortUrl($short);
     }
@@ -180,17 +179,8 @@ class ShortyHelper {
       return FALSE;
     }
 
-    $return = 'found';
-    if (
-      $long &&
-      $shorty instanceof ShortyInterface &&
-      $shorty->getDestinationUrl()->toString() === $long
-    ) {
-      $return = 'match';
-    }
-    return $return;
+    return 'found';
   }
-
 
   /**
    * Get Shorty by Short URL.
@@ -215,24 +205,24 @@ class ShortyHelper {
   }
 
   /**
-   * Checks to see if there's a menu handler, path alias, or language prefix for a given path
+   * Checks to see if there's a menu handler, path alias, or language prefix.
    *
    * @return bool
    *   TRUE if there are no conflicts, FALSE otherwise.
    */
   private function isShortUrlAvailable(string $path): bool {
-    // check to see if path represents an enabled language
-    $languages =  $this->languageManager->getLanguages();
+    // Check to see if path represents an enabled language.
+    $languages = $this->languageManager->getLanguages();
     if (array_key_exists($path, $languages)) {
       return FALSE;
     }
 
     $return = TRUE;
 
-    // see if $path is an alias
-    $source = $this->pathAliasManager->getAliasByPath('/'.$path);
+    // See if $path is an alias.
+    $source = $this->pathAliasManager->getAliasByPath('/' . $path);
     if ($source !== $path) {
-      // if so, set alias source to $path
+      // If so, set alias source to $path.
       $path = $source;
     }
 
@@ -246,25 +236,28 @@ class ShortyHelper {
   }
 
   /**
-   * From http://www.php.net/manual/en/function.base-convert.php#52450
+   * From http://www.php.net/manual/en/function.base-convert.php#52450.
    *
    * Parameters:
    * $num - your decimal integer
-   * $base - base to which you wish to convert $num (leave it 0 if you are providing $index or omit if you're using default (62))
-   * $index - if you wish to use the default list of digits (0-1a-zA-Z), omit this option, otherwise provide a string (ex.: "zyxwvu")
+   * $base - base to which you wish to convert $num (leave it 0 if you are
+   * providing $index or omit if you're using default (62)).
+   * $index - if you wish to use the default list of digits (0-1a-zA-Z),
+   * omit this option, otherwise provide a string (ex.: "zyxwvu").
    */
   private function dec2any(int $num, int $base = 62, string $index = ''): string {
     if (!$base) {
       $base = strlen($index);
     }
     elseif ($index === '') {
-      // note: we could rearrange this string to get more random looking URLs
-      // another note, to create printable URLs, omit the following characters: 01lIO
+      // Note: we could rearrange this string to get more random looking URLs.
+      // Another note, to create printable URLs,
+      // omit the following characters: 01lIO.
       $index = substr("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 0, $base);
     }
     $out = "";
-    for ( $t = floor( log10( $num ) / log10( $base ) ); $t >= 0; $t-- ) {
-      $a = floor( $num / ($base ** $t));
+    for ($t = floor(log10($num) / log10($base)); $t >= 0; $t--) {
+      $a = floor($num / ($base ** $t));
       $out .= $index[$a];
       $num -= ($a * ($base ** $t));
     }

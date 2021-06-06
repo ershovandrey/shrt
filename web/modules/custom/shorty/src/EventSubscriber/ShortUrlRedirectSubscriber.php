@@ -2,8 +2,6 @@
 
 namespace Drupal\shorty\EventSubscriber;
 
-use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Path\CurrentPathStack;
 use Drupal\shorty\Service\ShortyHelper;
@@ -44,6 +42,10 @@ class ShortUrlRedirectSubscriber implements EventSubscriberInterface {
    *
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
+   * @param \Drupal\Core\Path\CurrentPathStack $current_path
+   *   Current path service.
+   * @param \Drupal\shorty\Service\ShortyHelper $helper
+   *   Shorty Helper Service.
    */
   public function __construct(MessengerInterface $messenger, CurrentPathStack $current_path, ShortyHelper $helper) {
     $this->messenger = $messenger;
@@ -72,7 +74,7 @@ class ShortUrlRedirectSubscriber implements EventSubscriberInterface {
     $path = $this->currentPath->getPath();
     $short_url = str_replace("/", "", $path);
 
-    if ($this->helper->validateShortUrl($short_url)){
+    if ($this->helper->validateShortUrl($short_url)) {
       $shorty = $this->helper->getShortyByShortUrl($short_url, TRUE);
       if ($shorty instanceof ShortyInterface) {
         if (!$shorty->isExpired()) {
@@ -87,6 +89,12 @@ class ShortUrlRedirectSubscriber implements EventSubscriberInterface {
     }
   }
 
+  /**
+   * Redirect to the short URL.
+   *
+   * @param \Drupal\shorty\ShortyInterface $shorty
+   *   Shorty entity.
+   */
   protected function shortyRedirect(ShortyInterface $shorty): void {
     $url = $shorty->getDestinationUrl()->toString();
     $url = str_replace(["\n", "\r"], '', $url);

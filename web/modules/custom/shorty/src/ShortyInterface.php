@@ -24,7 +24,7 @@ interface ShortyInterface extends ContentEntityInterface, EntityOwnerInterface, 
    * Sets the shorty status.
    *
    * @param int $status
-   *   1 to enable this shorty, 0 to disable.
+   *   Use 1 to enable this shorty, 0 to disable.
    *
    * @return \Drupal\shorty\ShortyInterface
    *   The called shorty entity.

@@ -21,7 +21,6 @@ class ShortyListBuilder extends EntityListBuilder {
    */
   protected DateFormatterInterface $dateFormatter;
 
-
   /**
    * Constructs a new ShortyListBuilder object.
    *
@@ -84,7 +83,7 @@ class ShortyListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity): array {
-    /* @var $entity \Drupal\shorty\ShortyInterface */
+    /** @var \Drupal\shorty\ShortyInterface $entity */
     $row['id'] = $entity->id();
     $row['destination'] = $entity->getDestinationUrlTrimmed();
     $row['source'] = $entity->getSourceUrl();

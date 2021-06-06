@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\shorty\Form\ShortyAddForm.
- */
 
 namespace Drupal\shorty\Form;
 
@@ -107,7 +103,7 @@ class ShortyAddForm extends FormBase {
         '#type' => 'textfield',
         '#size' => 30,
         '#value' => $storage['shorty']['final_url'],
-        '#field_prefix' => t('Your short URL:'),
+        '#field_prefix' => $this->t('Your short URL:'),
       ];
     }
 
@@ -120,7 +116,7 @@ class ShortyAddForm extends FormBase {
       '#required' => TRUE,
       '#attributes' => [
         'tabindex' => 1,
-        'placeholder' => t('Enter a long URL to make short'),
+        'placeholder' => $this->t('Enter a long URL to make short'),
       ],
     ];
 
@@ -133,8 +129,8 @@ class ShortyAddForm extends FormBase {
       '#title' => $this->t('Expire on'),
       '#required' => TRUE,
       '#attributes' => [
-        'min' => $next_day_date
-      ]
+        'min' => $next_day_date,
+      ],
     ];
     if ($this->currentUser()->hasPermission('set shorty long expiration')) {
       $next_year_timestamp = $current_date + Shorty::SHORTY_YEAR_PERIOD;
@@ -151,7 +147,7 @@ class ShortyAddForm extends FormBase {
 
     $form['submit'] = [
       '#type' => 'submit',
-      '#value' => t('Shorty it!'),
+      '#value' => $this->t('Shorty it!'),
       '#attributes' => ['tabindex' => 2],
     ];
 
@@ -162,7 +158,6 @@ class ShortyAddForm extends FormBase {
 
   /**
    * {@inheritdoc}
-   * @throws \Exception
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $form_state->setValue('long_url', trim($form_state->getValue('long_url')));
@@ -174,7 +169,7 @@ class ShortyAddForm extends FormBase {
       $long_url === 'https://' ||
       !$this->helper->validateLongUrl($long_url)
     ) {
-      $form_state->setErrorByName('long_url', t('Please enter a valid web URL.'));
+      $form_state->setErrorByName('long_url', $this->t('Please enter a valid web URL.'));
       return;
     }
 
@@ -186,7 +181,7 @@ class ShortyAddForm extends FormBase {
     $next_month_timestamp = $current_date + Shorty::SHORTY_MONTH_PERIOD;
 
     if ($expire_on_timestamp <= $current_date) {
-      $form_state->setErrorByName('expire_on', t('Expire on date should be in future.'));
+      $form_state->setErrorByName('expire_on', $this->t('Expire on date should be in future.'));
       return;
     }
 
@@ -197,7 +192,7 @@ class ShortyAddForm extends FormBase {
       ($expire_on_timestamp > $next_year_timestamp)
     ) {
       // Registered users can create one year valid shorties.
-      $form_state->setErrorByName('expire_on', t('Maximum valid period for the short link is one year.'));
+      $form_state->setErrorByName('expire_on', $this->t('Maximum valid period for the short link is one year.'));
       return;
     }
 
@@ -206,10 +201,9 @@ class ShortyAddForm extends FormBase {
       ($expire_on_timestamp > $next_month_timestamp)
     ) {
       // Anonymous users can create one month valid shorties.
-      $form_state->setErrorByName('expire_on', t('Maximum valid period for the short link is one month. Please register to create short urls with one year expiration.'));
+      $form_state->setErrorByName('expire_on', $this->t('Maximum valid period for the short link is one month. Please register to create short urls with one year expiration.'));
       return;
     }
-
 
     $short = $this->helper->getNextShortUrl();
     $form_state->setValue('short_url', $short);
@@ -251,9 +245,10 @@ class ShortyAddForm extends FormBase {
     }
     catch (InvalidPluginDefinitionException | PluginNotFoundException | EntityStorageException $e) {
       $this->logger->error('Failed to save shorty with short URL %url.', ['%url' => $short_url]);
-      $this->messenger()->addError(t('Failed to save shorty with short URL %url', ['%url' => $short_url]));
+      $this->messenger()->addError($this->t('Failed to save shorty with short URL %url', ['%url' => $short_url]));
       return;
     }
-    $this->messenger()->addStatus(t('Your shorty is saved!'));
+    $this->messenger()->addStatus($this->t('Your shorty is saved!'));
   }
+
 }
