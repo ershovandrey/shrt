@@ -96,23 +96,12 @@ class ShortyAddForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $storage = $form_state->getStorage();
-
-    if (isset($storage['shorty']['final_url'])) {
-      $form['result'] = [
-        '#type' => 'textfield',
-        '#size' => 30,
-        '#value' => $storage['shorty']['final_url'],
-        '#field_prefix' => $this->t('Your short URL:'),
-      ];
-    }
-
     $form['long_url'] = [
       '#type' => 'textfield',
       '#size' => 100,
       '#maxlength' => 2048,
       '#title' => $this->t('Long URL'),
-      '#default_value' => $storage['shorty']['long_url'] ?? FALSE,
+      '#default_value' => '',
       '#required' => TRUE,
       '#attributes' => [
         'tabindex' => 1,
@@ -129,6 +118,7 @@ class ShortyAddForm extends FormBase {
       '#title' => $this->t('Expire on'),
       '#required' => TRUE,
       '#attributes' => [
+        'tabindex' => 3,
         'min' => $next_day_date,
       ],
     ];
@@ -150,8 +140,6 @@ class ShortyAddForm extends FormBase {
       '#value' => $this->t('Shorty it!'),
       '#attributes' => ['tabindex' => 2],
     ];
-
-    unset($storage['shorty']);
 
     return $form;
   }
@@ -176,6 +164,7 @@ class ShortyAddForm extends FormBase {
     $expire_on = $form_state->getValue('expire_on');
     $dateTime = new \DateTime($expire_on);
     $expire_on_timestamp = $dateTime->format('U');
+    $form_state->setValue('expire_on_timestamp', $expire_on_timestamp);
     $current_date = $this->time->getCurrentTime();
     $next_year_timestamp = $current_date + Shorty::SHORTY_YEAR_PERIOD;
     $next_month_timestamp = $current_date + Shorty::SHORTY_MONTH_PERIOD;
@@ -204,38 +193,26 @@ class ShortyAddForm extends FormBase {
       $form_state->setErrorByName('expire_on', $this->t('Maximum valid period for the short link is one month. Please register to create short urls with one year expiration.'));
       return;
     }
-
-    $short = $this->helper->getNextShortUrl();
-    $form_state->setValue('short_url', $short);
-    $form_state->setValue('expire_on_timestamp', $expire_on_timestamp);
-    $form_state->setStorage(['shorty' => ['short_url' => $short]]);
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $long_url = $form_state->getValue('long_url');
-    $short_url = $form_state->getValue('short_url');
-    $expire_on = $form_state->getValue('expire_on_timestamp');
+    // Create Short URL.
     $shorty_base = $this->config('shorty.settings')->get('shorty_base');
-
-    $form_state->setStorage([
-      'shorty' => [
-        'long_url' => $long_url,
-        'short_url' => $short_url,
-        'final_url' => urldecode($shorty_base . '/' . $short_url),
-      ],
-    ]);
-
-    $form_state->setRebuild();
+    $short = $this->helper->getNextShortUrl();
+    $short_url = urldecode($shorty_base . '/' . $short);
 
     $entity_type_id = 'shorty';
+    $long_url = $form_state->getValue('long_url');
+    $expire_on_timestamp = $form_state->getValue('expire_on_timestamp');
+    $expire_on_date = $this->dateFormatter->format($expire_on_timestamp, 'short');
     $fields = [
       'type' => $entity_type_id,
       'destination' => $long_url,
-      'source' => $short_url,
-      'expire_on' => $expire_on,
+      'source' => $short,
+      'expire_on' => $expire_on_timestamp,
     ];
     try {
       $this->entityTypeManager
@@ -248,7 +225,12 @@ class ShortyAddForm extends FormBase {
       $this->messenger()->addError($this->t('Failed to save shorty with short URL %url', ['%url' => $short_url]));
       return;
     }
-    $this->messenger()->addStatus($this->t('Your shorty is saved!'));
+
+    $this->messenger()
+      ->addStatus($this->t('Your short URL: %url <br/>Valid until: %expire', [
+        '%url' => $short_url,
+        '%expire' => $expire_on_date,
+      ]));
   }
 
 }
