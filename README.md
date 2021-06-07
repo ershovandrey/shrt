@@ -1,8 +1,8 @@
-#Shorty!
+# Shorty!
 
 This is a simple URL shortener service built on top of [Drupal 9](https://www.drupal.org/) and inspired by the [ShURLy](https://www.drupal.org/project/shurly) Drupal module.
 
-##How to install it locally
+## How to install it locally
 1. Install Docker (and docker-compose separately if you are on Linux)
 2. Clone git repo:
 ```shell
@@ -46,7 +46,7 @@ make up
 ```
 and it will pull everything back.
 
-##Functionality
+## Functionality
 There are 3 types of users supported:
   - Anonymous users:
     - Can login/register/restore password.
@@ -69,7 +69,7 @@ The user management dashboard is on the [People page](http://sh.rt/admin/people)
 
 There is one registered user with credentials `test@example.com`/`pass` for testing purposes.
 
-##What's missing:
+## What's missing:
 - Rate limiting
 - Spam prevention
 - Danger URL filtering
