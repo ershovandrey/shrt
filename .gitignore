@@ -48,7 +48,3 @@
 
 # OS files.
 .DS_Store
-
-# Docker4Drupal related files
-/mariadb-init/**
-/mysql/**
