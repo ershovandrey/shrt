@@ -27,7 +27,7 @@ make composer install
 make drush status
 ```
 8. Now you can access the URL shortener service using URL [http://sh.rt](http://sh.rt).
-9. Log in as the admin, run the command, and use generated URL
+9. Log in as the admin - run the command, and use generated URL
 ```shell
 make drush uli
 ```
@@ -52,9 +52,8 @@ There are 3 types of users supported:
     - Can login/register/restore password.
     - Can create an unlimited amount of Short URLs with 1 month expiration period.
   - Authenticated
-    - Anonymous +
     - Can create an unlimited amount of Short URLs with a maximum expiration duration of 1 year
-    - Can edit own account (change email, password)
+    - Can edit own account (change email, change password)
     - Can see his saved short URLs and track visits.
   - Administrator
     - Can do everything on the site
@@ -76,4 +75,4 @@ There is one registered user with credentials `test@example.com`/`pass` for test
 - Caching the redirect response in any external service like Varnish
 - Integration with analytics services
 - Ability to enter custom short URL
-- Etc.
+- You name it :).
