@@ -6,10 +6,8 @@ module:
   breakpoint: 0
   config: 0
   dblog: 0
-  devel: 0
   dynamic_page_cache: 0
   field: 0
-  field_ui: 0
   filter: 0
   page_cache: 0
   path_alias: 0
@@ -19,7 +17,6 @@ module:
   text: 0
   toolbar: 0
   user: 0
-  views_ui: 0
   views: 10
   minimal: 1000
 theme:
